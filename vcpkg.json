@@ -1,0 +1,7 @@
+{
+  "name": "no-tracking-markers",
+  "version": "0.1",
+  "dependencies": [
+    "boost-url"
+  ]
+}
