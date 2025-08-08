@@ -18,12 +18,11 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: 'useVcpkg'
+          configurePresetAdditionalArgs: '[ -DCMAKE_BUILD_TYPE=Release ]'
 
           buildPreset: 'useVcpkg'
-          buildPresetAdditionalArgs: '[ --config Release ]'
 
           testPreset: 'useVcpkg'
-          testPresetAdditionalArgs: '[ --config Release]'
 
       - name: Create artifact
         uses: actions/upload-artifact@v4
