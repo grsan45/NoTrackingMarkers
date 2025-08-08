@@ -1,8 +1,9 @@
 # No Tracking Markers
 
----
-
 This application automatically removes those pesky tracking markers from URLs in your clipboard.
+
+<img src="https://r2.grsan.xyz/ntmpreview.png" width = 50% alt="Image highlighting a tracking marker in a URL" style="vertical-align: middle"/>
+(These things)
 
 Windows only for now. Maybe I'll make a linux version later.
 
@@ -16,4 +17,4 @@ Building with the command line follows the usual steps:
 3. `ninja -j4`
 
 ---
-<sub>Licensed Under GNU GPL-v3.0</sub>
+<sub>Licensed Under GNU GPL-3.0</sub>
