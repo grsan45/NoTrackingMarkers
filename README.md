@@ -2,8 +2,7 @@
 
 This application automatically removes those pesky tracking markers from URLs in your clipboard.
 
-<img src="https://r2.grsan.xyz/ntmpreview.png" width = 50% alt="Image highlighting a tracking marker in a URL" style="vertical-align: middle"/>
-(These things)
+![Image highlighting a tracking marker in a url](https://r2.grsan.xyz/ntmpreview.png) (These Things)
 
 Windows only for now. Maybe I'll make a linux version later.
 
