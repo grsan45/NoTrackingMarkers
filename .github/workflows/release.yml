@@ -18,7 +18,7 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: 'useVcpkg'
-          configurePresetAdditionalArgs: ""['-DCMAKE_BUILD_TYPE=Release']"
+          configurePresetAdditionalArgs: "['-DCMAKE_BUILD_TYPE=Release']"
 
           buildPreset: 'useVcpkg'
 
