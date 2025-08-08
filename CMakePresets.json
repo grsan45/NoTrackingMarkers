@@ -6,8 +6,15 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vcpkg-build",
+      "configurePreset": "useVcpkg",
+      "displayName": "Build (Release)"
     }
   ]
 }
