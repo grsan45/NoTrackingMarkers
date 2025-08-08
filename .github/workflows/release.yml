@@ -1,0 +1,32 @@
+name: build-release
+on: [push]
+jobs:
+  build-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+
+      - uses: lukka/get-cmake@latest
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+
+      - name: Run cmake build
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'useVcpkg'
+
+          buildPreset: 'useVcpkg'
+          buildPresetAdditionalArgs: '[ --config Release ]'
+
+          testPreset: 'useVcpkg'
+          testPresetAdditionalArgs: '[ --config Release]'
+
+      - name: Create artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: no-tracking-markers
+          path: 'build/NoTrackingMakers.exe'
