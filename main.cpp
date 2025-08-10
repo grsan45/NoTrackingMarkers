@@ -4,11 +4,15 @@
 #endif
 
 #include "ntm.h"
+#include "resources.h"
 #include <list>
 
 #define ICON_CALLBACK 0xf001
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+
+    INITCOMMONCONTROLSEX icex = {.dwSize=sizeof(INITCOMMONCONTROLSEX), .dwICC=ICC_STANDARD_CLASSES | ICC_BAR_CLASSES};
+    InitCommonControlsEx(&icex);
 
     const wchar_t* CLASS_NAME = L"NTM";
 
@@ -38,12 +42,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     // All interaction with the app is done with a system tray icon
     NOTIFYICONDATA iconData = {
+            .cbSize = sizeof(NOTIFYICONDATA),
             .hWnd = hwnd,
-            .uFlags = NIF_MESSAGE | NIF_GUID | NIF_TIP | NIF_SHOWTIP,
+            .uFlags = NIF_MESSAGE | NIF_GUID | NIF_TIP | NIF_SHOWTIP | NIF_ICON,
             .uCallbackMessage = ICON_CALLBACK,
             .szTip = L"No Tracking Markers",
             .guidItem = gidIcon,
     };
+    HRESULT hLoadResult = LoadIconMetric(GetModuleHandle(nullptr), MAKEINTRESOURCE(NTM_ICON_SMALL), LIM_SMALL, &iconData.hIcon);
+    if (hLoadResult != S_OK) return 0;
+
     Shell_NotifyIcon(NIM_ADD, &iconData);
 
     MSG msg = {};

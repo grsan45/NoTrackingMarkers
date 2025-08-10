@@ -1,0 +1,2 @@
+#define NTM_ICON 100
+#define NTM_ICON_SMALL 101

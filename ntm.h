@@ -2,6 +2,8 @@
 #define NOTRACKINGMARKERS_NTM_H
 
 #include <windows.h>
+#include <commctrl.h>
+
 #include <boost/url.hpp>
 
 #define ICON_CALLBACK 0xf001
