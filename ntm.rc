@@ -4,3 +4,5 @@ CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "NoTrackingMarkers.exe.manifest"
 
 NTM_ICON ICON "resources\\ntm_icon.ico"
 NTM_ICON_SMALL ICON "resources\\ntm_small_icon.ico"
+
+DEFAULT_CONFIG CONFIG_RESOURCE_TYPE "resources\\default_config.json"

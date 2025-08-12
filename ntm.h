@@ -3,6 +3,9 @@
 
 #include <windows.h>
 #include <commctrl.h>
+#include <shlwapi.h>
+#include <shlobj.h>
+#include <strsafe.h>
 
 #include <boost/url.hpp>
 

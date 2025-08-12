@@ -1,0 +1,9 @@
+{
+  "autoStart": true,
+  "hosts": [
+    {
+      "host":  "youtu.be",
+      "flags": ["si"]
+    }
+  ]
+}

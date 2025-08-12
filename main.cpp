@@ -11,8 +11,44 @@
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 
+    // setup common controls
     INITCOMMONCONTROLSEX icex = {.dwSize=sizeof(INITCOMMONCONTROLSEX), .dwICC=ICC_STANDARD_CLASSES | ICC_BAR_CLASSES};
     InitCommonControlsEx(&icex);
+
+    // copy config file if it doesn't exist
+    TCHAR lpcConfigFilePath[MAX_PATH];
+    TCHAR lpcConfigFileDir[MAX_PATH]; // technically safe to do this, ill probably fix it later
+    ExpandEnvironmentStrings(L"%LOCALAPPDATA%\\NoTrackingMarkers\\config.json",
+                             lpcConfigFilePath, sizeof(TCHAR) * MAX_PATH);
+
+    StringCchCopy(lpcConfigFileDir, MAX_PATH * sizeof(TCHAR), lpcConfigFilePath);
+    PathRemoveFileSpec(lpcConfigFileDir);
+
+    if (!PathFileExists(lpcConfigFilePath)) {
+        if (SHCreateDirectoryEx(nullptr, lpcConfigFileDir, nullptr) != S_OK) return 2;
+
+        HRSRC hCfgRes = FindResource(GetModuleHandle(nullptr),
+                                     MAKEINTRESOURCE(DEFAULT_CONFIG), MAKEINTRESOURCE(CONFIG_RESOURCE_TYPE));
+        if (hCfgRes == nullptr) return 2;
+
+        HGLOBAL hCfgResData = LoadResource(GetModuleHandle(nullptr), hCfgRes);
+        if (hCfgResData == nullptr) return 2;
+
+        LPVOID lpCfgResLock = LockResource(hCfgResData);
+        if (lpCfgResLock == nullptr) return 2;
+
+        DWORD dwCfgSize = SizeofResource(GetModuleHandle(nullptr), hCfgRes);
+
+        HANDLE hCfgFile = CreateFile(lpcConfigFilePath, GENERIC_WRITE, 0, nullptr,
+                                     CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (hCfgFile == INVALID_HANDLE_VALUE) return 2;
+
+        DWORD dwBytesWritten;
+        BOOL writeSuccess = WriteFile(hCfgFile, lpCfgResLock, dwCfgSize, &dwBytesWritten, nullptr);
+        if (!writeSuccess) return 2;
+
+        CloseHandle(hCfgFile);
+    }
 
     const wchar_t* CLASS_NAME = L"NTM";
 
@@ -32,7 +68,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             nullptr
             );
 
-    if (hwnd == nullptr) return 0;
+    if (hwnd == nullptr) return 1;
 
     // listen to all changes to clipboard
     AddClipboardFormatListener(hwnd);
@@ -49,8 +85,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             .szTip = L"No Tracking Markers",
             .guidItem = gidIcon,
     };
+
+    // set up app icon
     HRESULT hLoadResult = LoadIconMetric(GetModuleHandle(nullptr), MAKEINTRESOURCE(NTM_ICON_SMALL), LIM_SMALL, &iconData.hIcon);
-    if (hLoadResult != S_OK) return 0;
+    if (hLoadResult != S_OK) return 1;
 
     Shell_NotifyIcon(NIM_ADD, &iconData);
 
