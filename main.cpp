@@ -5,7 +5,6 @@
 
 #include "ntm.h"
 #include "resources.h"
-#include <list>
 
 #define ICON_CALLBACK 0xf001
 
@@ -49,6 +48,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
         CloseHandle(hCfgFile);
     }
+
+    // Open config file for reading
+    HANDLE hCfgFile = CreateFile(lpcConfigFilePath, GENERIC_READ, 0, nullptr,
+                                 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (hCfgFile == INVALID_HANDLE_VALUE) return 3;
+
+    CHAR pbCfgData[4096] = {0};
+    DWORD dwBytesRead;
+
+    // todo: dynamic realloc for cfg file >4KiB, though that's unlikely to ever happen
+    if (!ReadFile(hCfgFile, pbCfgData, 4096, &dwBytesRead, nullptr)) return 3;
+
+    ProcessConfig(pbCfgData, appConfig);
+
+    CloseHandle(hCfgFile);
 
     const wchar_t* CLASS_NAME = L"NTM";
 
@@ -202,4 +216,33 @@ void HandleIcon(HWND hwnd, WPARAM wIcon, LPARAM lAction) {
     if (uSelectedItem == MENU_EXIT) PostQuitMessage(0);
 
     DestroyMenu(hActionMenu);
+}
+
+void ProcessConfig(const CHAR* pbConfigData, Configuration cfg) {
+    boost::json::value parsed = boost::json::parse(pbConfigData);
+    boost::json::object *obj = parsed.if_object();
+
+    // basic schema validation
+    assert(obj);
+    assert(obj->if_contains("autoStart")->is_bool());
+    assert(obj->if_contains("hosts")->is_array());
+
+    cfg.bAutoStart = obj->if_contains("autoStart")->get_bool();
+
+    boost::json::array hostsArr = obj->if_contains("hosts")->get_array();
+    for (auto host : hostsArr) {
+        assert(host.is_object());
+        boost::json::object *hostObj = host.if_object();
+
+        std::string_view hostname = hostObj->if_contains("host")->get_string();
+        auto flags = std::list<std::string_view>();
+
+        boost::json::array hostFlagsArr = hostObj->if_contains("flags")->get_array();
+        for (auto flag : hostFlagsArr) {
+            assert(flag.is_string());
+            flags.push_back(flag.get_string());
+        }
+
+        cfg.hosts_map.emplace(hostname, flags);
+    }
 }

@@ -1,7 +1,7 @@
 {
   "name": "no-tracking-markers",
-  "version": "0.1.0.0",
+  "version": "1.0.0.0",
   "dependencies": [
-    "boost-url"
+    "boost-url", "boost-json"
   ]
 }
